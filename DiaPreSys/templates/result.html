@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh; /* Viewport height */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        .container {
+            margin-top: 50px;
+            position: relative;
+        }
+        .card {
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+        }
+        .btn-primary {
+            width: 100%;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .btn-primary:hover {
+            transform: scale(1.1);
+            background-color: #45a049;
+        }
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .result-positive, .result-negative {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .result-positive {
+            color: red;
+            font-weight: bold;
+        }
+        .result-negative {
+            color: green;
+            font-weight: bold;
+        }
+        .stickman {
+            position: absolute;
+            width: 50px;
+            height: 100px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .stickman-left {
+            left: -60px;
+            animation: walk-left 5s infinite;
+        }
+        .stickman-right {
+            right: -60px;
+            animation: walk-right 5s infinite;
+        }
+        @keyframes walk-left {
+            0% { left: -60px; }
+            50% { left: 50vw; }
+            100% { left: -60px; }
+        }
+        @keyframes walk-right {
+            0% { right: -60px; }
+            50% { right: 50vw; }
+            100% { right: -60px; }
+        }
+        .guideline-card {
+            margin-top: 20px;
+        }
+        .guideline-card img {
+            height: 150px;
+            object-fit: cover;
+        }
+        .download-link {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <h2>Prediction Result</h2>
+                <div id="result-message"></div>
+                <div id="health-guidelines" class="row">
+                    <!-- Health guidelines will be displayed here -->
+                </div>
+                <a href="{% url 'predict' %}" class="btn btn-secondary mt-3">Make another prediction</a>
+                <a href="{% url 'home' %}" class="btn btn-primary mt-3">Go Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 160,
+                    "density": {
+                        "enable": true,
+                        "value_area": 1000
+                    }
+                },
+                "color": {
+                    "value": ["#ff7f50", "#ff6f61", "#4facfe", "#00f2fe", "#fcb69f"]
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": true
+                    }
+                },
+                "size": {
+                    "value": 5,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const prediction = "{{ prediction }}";
+            const resultMessage = document.getElementById("result-message");
+            const healthGuidelines = document.getElementById("health-guidelines");
+
+            if (prediction.toLowerCase().includes("positive")) {
+                resultMessage.classList.add("result-positive");
+                resultMessage.innerHTML = `<p>${prediction}</p>`;
+                healthGuidelines.innerHTML = `
+                    <div class="col-sm-4 col-lg-4 guideline-card">
+                        <div class="card mb-2">
+                            <img src="../static/DiabetesPrediction/images/diet.jpg" class="card-img-top" alt="Healthy Diet">
+                            <div class="card-body">
+                                <h5 class="card-title">Maintain a Healthy Diet</h5>
+                                <p class="card-text">Focus on a balanced diet with plenty of vegetables, fruits, and whole grains.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-lg-4 guideline-card">
+                        <div class="card mb-2">
+                            <img src="../static/DiabetesPrediction/images/exercise.jpg" class="card-img-top" alt="Exercise Regularly">
+                            <div class="card-body">
+                                <h5 class="card-title">Exercise Regularly</h5>
+                                <p class="card-text">Engage in regular physical activity to maintain a healthy weight and lower blood sugar levels.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-lg-4 guideline-card">
+                        <div class="card mb-2">
+                            <img src="../static/DiabetesPrediction/images/monitoring.jpg" class="card-img-top" alt="Monitor Blood Sugar">
+                            <div class="card-body">
+                                <h5 class="card-title">Monitor Blood Sugar</h5>
+                                <p class="card-text">Regularly check your blood sugar levels to manage your diabetes effectively.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 guideline-card">
+                        <div class="card">
+                            <img src="../static/DiabetesPrediction/images/medication.jpg" class="card-img-top" alt="Take Medications">
+                            <div class="card-body">
+                                <h5 class="card-title">Take Prescribed Medications</h5>
+                                <p class="card-text">Follow your doctor's instructions regarding medications to keep your diabetes under control.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 guideline-card">
+                        <div class="card">
+                            <img src="../static/DiabetesPrediction/images/checkup.jpg" class="card-img-top" alt="Regular Check-ups">
+                            <div class="card-body">
+                                <h5 class="card-title">Regular Check-ups</h5>
+                                <p class="card-text">Visit your healthcare provider regularly to monitor your condition and adjust treatments as needed.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultMessage.classList.add("result-negative");
+                resultMessage.innerHTML = `<p>${prediction}</p>`;
+                healthGuidelines.innerHTML = `
+                    <div class="col-sm-4 guideline-card">
+                        <div class="card">
+                            <img src="../static/DiabetesPrediction/images/diet.jpg" class="card-img-top" alt="Balanced Diet">
+                            <div class="card-body">
+                                <h5 class="card-title">Eat a Balanced Diet</h5>
+                                <p class="card-text">Include a variety of foods in your diet to get all necessary nutrients.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 guideline-card">
+                        <div class="card">
+                            <img src="../static/DiabetesPrediction/images/physio.jpg" class="card-img-top" alt="Physical Activity">
+                            <div class="card-body">
+                                <h5 class="card-title">Stay Physically Active</h5>
+                                <p class="card-text">Engage in regular exercise to maintain a healthy weight and improve insulin sensitivity.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 guideline-card">
+                        <div class="card">
+                            <img src="../static/DiabetesPrediction/images/healthy-weight.jpg" class="card-img-top" alt="Healthy Weight">
+                            <div class="card-body">
+                                <h5 class="card-title">Maintain a Healthy Weight</h5>
+                                <p class="card-text">Keep your weight within a healthy range to lower your risk of diabetes.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 guideline-card">
+                        <div class="card">
+                            <img src="../static/DiabetesPrediction/images/Xsmoking.jpg" class="card-img-top" alt="Avoid Smoking">
+                            <div class="card-body">
+                                <h5 class="card-title">Avoid Smoking</h5>
+                                <p class="card-text">Smoking increases your risk of diabetes and other health complications.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 guideline-card">
+                        <div class="card">
+                            <img src="../static/DiabetesPrediction/images/health-screening.jpg" class="card-img-top" alt="Health Screening">
+                            <div class="card-body">
+                                <h5 class="card-title">Regular Health Screenings</h5>
+                                <p class="card-text">Regular check-ups can help detect diabetes early and prevent complications.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
